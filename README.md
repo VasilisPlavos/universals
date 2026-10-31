@@ -1,87 +1,106 @@
-# Universal Search
+# Universals
 
-Search multiple search engines simultaneously with a single query. One click opens all your selected engines in new tabs.
+A suite of simple, privacy-friendly browser multi-tools that execute simultaneous actions across services in new tabs.
 
-![Dark Mode](https://img.shields.io/badge/theme-dark-1a1a1a) ![Light Mode](https://img.shields.io/badge/theme-light-f5f5f5)
+🌐 **Live Website**: [https://vasilisplavos.github.io/universals/](https://vasilisplavos.github.io/universals/)
 
-## Features
+![Dark Mode](https://img.shields.io/badge/theme-dark-1a1a1a) ![Light Mode](https://img.shields.io/badge/theme-light-f5f5f5) ![Zero Dependencies](https://img.shields.io/badge/dependencies-none-brightgreen)
 
-- **Simultaneous Search** - Enter your query once, search everywhere
-- **18 Search Engines** - Google, DuckDuckGo, YouTube, Wikipedia, and more
-- **Categorized Selection** - Engines organized into General Search, Audiovisual, and Tools
-- **Customizable** - Choose which engines to include with checkboxes
-- **Dark/Light Theme** - Toggle between themes with one click
-- **Remembers Preferences** - Your theme and engine selections are saved locally
+---
 
-## Search Engines
+## 🛠️ Included Solutions
 
-### General Search
-Google, DuckDuckGo, Startpage, Wikipedia EN/NL
+### 1. Universal Search (`/search/`)
+Search multiple search engines simultaneously with a single query.
+- **18 Search Engines**: Google, DuckDuckGo, YouTube, Wikipedia (EN/NL), Startpage, Google Images, Maps, Drive, Wolfram Alpha, Google Translate, etc.
+- **Categorized Selection**: General Search, Audiovisual, and Tools.
+- **Customizable**: Toggle engines individually or by category.
 
-### Audiovisual
-YouTube, Google Images, DuckDuckGo Images, Startpage Images
+### 2. Universal Paywalls (`/paywalls/`)
+Open any article URL across multiple public web archives, cache services, and bypass/clean reader views in parallel tabs.
+- **Supported Providers**:
+  - **Archive.ph** (`https://archive.ph/newest/`)
+  - **Wayback Machine** (`https://web.archive.org/web/`)
+  - **Google Cache** (`https://webcache.googleusercontent.com/search?q=cache:`)
+  - **12ft.io** (`https://12ft.io/`)
+  - **RemovePaywall.com** (`https://www.removepaywall.com/search?url=`)
+  - **smry.ai** (`https://smry.ai/`)
+  - **1ft.io** (`https://1ft.io/`)
+  - **RemovePaywalls.com** (`https://removepaywalls.com/`)
+- **Auto-Formatting**: Automatically handles URLs entered with or without `https://`.
+- **Customizable**: Choose which providers you want to query each time.
 
-### Tools
-Google Translate, Google Drive, Wolfram Alpha, Google Maps, DuckDuckGo Maps
+---
 
-## Usage
+## ✨ Shared Features
 
-1. Open `universal-search.html` in your browser
-2. Select the search engines you want to use
-3. Type your search query
-4. Click **"search in tabs"** or press Enter
-5. All selected engines open in new tabs
+- **Hub Navigation**: Central landing page to launch either tool with top-bar navigation between them.
+- **Dark & Light Mode**: Seamless theme toggle synced across the hub and all tools via `localStorage`.
+- **Preferences Saved**: Your selected engines and providers persist between visits.
+- **Zero Dependencies**: Pure HTML, CSS, and vanilla JavaScript. No trackers, no cookies, no frameworks.
+- **Staggered Opening**: Smart popup delay to minimize aggressive browser blocking.
 
-## Browser Permissions
+---
 
-The tool needs permission to open multiple tabs. When prompted, allow popups for the page. Most browsers show this option in the address bar when popups are blocked.
+## 🚀 Usage
 
-## Installation
+### Universal Search
+1. Open the [Universal Search](https://vasilisplavos.github.io/universals/search/) page.
+2. Select your desired search engines.
+3. Enter your search query.
+4. Press **Enter** or click **"search in tabs"**.
 
-No installation needed. Just download and open the HTML file in any modern browser.
+### Universal Paywalls
+1. Open the [Universal Paywalls](https://vasilisplavos.github.io/universals/paywalls/) page.
+2. Select which bypass or archive providers you'd like to test.
+3. Paste the paywalled article URL (e.g. `https://plavos.com/article`).
+4. Press **Enter** or click **"unlock in tabs"**.
 
+---
+
+## 🔗 URL Query Parameters & Quick Launch
+
+You can prefill forms directly through the URL, making it easy to create browser bookmarks, extensions, or Alfred/Raycast shortcuts:
+
+### Pre-fill Universal Paywalls
+Pass any article link with `?url=`:
+```text
+https://vasilisplavos.github.io/universals/paywalls/?url=https://example.com/article
 ```
-git clone https://github.com/yourusername/universal-search.git
+*(Passing `?url=` to the root `universals/?url=...` will also automatically route directly to Paywalls!)*
+
+### Pre-fill Universal Search
+Pass your search term with `?q=`:
+```text
+https://vasilisplavos.github.io/universals/search/?q=my+search+query
+```
+*(Passing `?q=` to the root `universals/?q=...` will also automatically route directly to Search!)*
+
+---
+
+## ⚠️ Browser Permissions (Important)
+
+These tools open multiple tabs at once upon user action. When using for the first time:
+- Your browser might show a popup blocked indicator in the address bar.
+- Click it and choose **"Always allow popups and redirects from this site"**.
+
+---
+
+## 📁 Repository Structure
+
+```text
+universals/
+├── index.html          # Hub landing page
+├── search/
+│   └── index.html      # Universal Search tool
+├── paywalls/
+│   └── index.html      # Universal Paywalls tool
+├── .nojekyll           # GitHub Pages bypass Jekyll
+└── README.md
 ```
 
-Or simply download `universal-search.html` and double-click to open.
+---
 
-## Contributing
-
-Contributions are welcome! The easiest way to contribute is by adding new search engines.
-
-### Adding a Search Engine
-
-1. Fork this repository
-2. Edit `universal-search.html`
-3. Add your engine to the appropriate category in the `categories` array:
-
-```javascript
-{
-  id: 'unique-id',
-  name: 'Display Name',
-  url: 'https://example.com/search',
-  param: 'q',           // query parameter name
-  extra: '&type=web'    // optional extra parameters
-}
-```
-
-4. Test it locally
-5. Submit a pull request
-
-### Ideas for New Engines
-
-- ChatGPT, Gemini, Perplexity
-- Bing, Yahoo, Brave Search
-- Reddit, Twitter/X, LinkedIn
-- Amazon, eBay, AliExpress
-- GitHub, Stack Overflow
-- Spotify, SoundCloud
-- IMDb, Rotten Tomatoes
-- News sites (Google News, BBC, CNN)
-
-Feel free to suggest new categories too!
-
-## License
+## 📄 License
 
 MIT

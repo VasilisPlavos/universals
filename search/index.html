@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Universal Search | Universals</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --text-primary: #fff;
+            --text-secondary: #888;
+            --border-color: #333;
+            --accent: #4a9eff;
+            --accent-hover: #3a8eef;
+        }
+        [data-theme="light"] {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #fff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --border-color: #ddd;
+            --accent: #2080df;
+            --accent-hover: #1a70cf;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            transition: background 0.3s, color 0.3s;
+        }
+        .top-nav {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+        .nav-link.hub {
+            color: var(--text-primary);
+        }
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            color: var(--text-primary);
+        }
+        .theme-toggle:hover {
+            border-color: var(--accent);
+        }
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            margin: auto 0;
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            font-weight: 300;
+            font-size: 2rem;
+        }
+        .subtitle {
+            margin: 0 0 30px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .search-box {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.3s, background 0.3s, color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: var(--accent);
+        }
+        input[type="text"]::placeholder {
+            color: var(--text-secondary);
+        }
+        button#searchBtn {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button#searchBtn:hover {
+            background: var(--accent-hover);
+        }
+        button#searchBtn:active {
+            transform: scale(0.98);
+        }
+        button#searchBtn:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        .permission-notice {
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #ff4444, #ff6b6b);
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            display: none;
+            border: 2px solid #ff6666;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .permission-notice.show {
+            display: block;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(255, 68, 68, 0.8);
+                transform: scale(1.02);
+            }
+        }
+        .engines-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .engines-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .engines-header span {
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+        .select-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .select-btn {
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .select-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .engines-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .category {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .category-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .category-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .cat-btn {
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 8px;
+        }
+        .engine-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            border: 1px solid var(--border-color);
+        }
+        .engine-item:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        .engine-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+        .engine-item label {
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="top-nav">
+        <div class="nav-links">
+            <a href="../index.html" class="nav-link hub" title="Return to Universals Hub">← Universals</a>
+            <a href="../paywalls/index.html" class="nav-link" title="Switch to Universal Paywalls">Paywalls ↗</a>
+        </div>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">🌙</button>
+    </header>
+
+    <main class="container">
+        <div id="permissionNotice" class="permission-notice">
+            Allow popups for this site to open all search tabs
+        </div>
+        <h1>Universal Search</h1>
+        <p class="subtitle">Search multiple search engines simultaneously in new tabs</p>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="search simultaneously" autocomplete="off" autofocus>
+            <button id="searchBtn" onclick="searchAll()">search in tabs</button>
+
+            <div class="engines-section">
+                <div class="engines-header">
+                    <span>Search Engines</span>
+                    <div class="select-buttons">
+                        <button type="button" class="select-btn" onclick="selectAll()">All</button>
+                        <button type="button" class="select-btn" onclick="selectNone()">None</button>
+                    </div>
+                </div>
+                <div class="engines-grid" id="enginesGrid"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            const toggle = document.getElementById('themeToggle');
+
+            if (body.getAttribute('data-theme') === 'light') {
+                body.removeAttribute('data-theme');
+                toggle.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                toggle.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                document.getElementById('themeToggle').textContent = '☀️';
+            }
+        })();
+
+        const categories = [
+            {
+                name: 'General Search',
+                engines: [
+                    { id: 'google', name: 'Google', url: 'https://www.google.com/search', param: 'q' },
+                    { id: 'ddg', name: 'DuckDuckGo', url: 'https://duckduckgo.com/', param: 'q' },
+                    { id: 'startpage', name: 'Startpage', url: 'https://www.startpage.com/do/search', param: 'query' },
+                    { id: 'google-out', name: 'Google (signed out)', url: 'https://www.google.com/search', param: 'q', extra: '&igu=1' },
+                    { id: 'ddg-html', name: 'DuckDuckGo HTML', url: 'https://duckduckgo.com/html', param: 'q' },
+                    { id: 'wiki-en', name: 'Wikipedia EN', url: 'https://en.wikipedia.org/w/index.php', param: 'search' },
+                    { id: 'wiki-nl', name: 'Wikipedia NL', url: 'https://nl.wikipedia.org/w/index.php', param: 'search' },
+                ]
+            },
+            {
+                name: 'Audiovisual',
+                engines: [
+                    { id: 'youtube', name: 'YouTube', url: 'https://www.youtube.com/results', param: 'search_query' },
+                    { id: 'google-img', name: 'Google Images', url: 'https://www.google.com/search', param: 'q', extra: '&tbm=isch' },
+                    { id: 'ddg-img', name: 'DuckDuckGo Images', url: 'https://duckduckgo.com/', param: 'q', extra: '&iax=images&ia=images' },
+                    { id: 'youtube-m', name: 'YouTube Mobile', url: 'https://m.youtube.com/results', param: 'search_query' },
+                    { id: 'google-img-out', name: 'Google Images (out)', url: 'https://www.google.com/search', param: 'q', extra: '&tbm=isch&igu=1&sout=1' },
+                    { id: 'startpage-img', name: 'Startpage Images', url: 'https://www.startpage.com/do/search', param: 'query', extra: '&cat=pics' },
+                ]
+            },
+            {
+                name: 'Tools',
+                engines: [
+                    { id: 'gdrive', name: 'Google Drive', url: 'https://drive.google.com/drive/mobile/search', param: 'q' },
+                    { id: 'wolfram', name: 'Wolfram Alpha', url: 'https://www.wolframalpha.com/input/', param: 'i' },
+                    { id: 'google-maps', name: 'Google Maps', url: 'https://www.google.com/maps/search/', param: 'query' },
+                    { id: 'ddg-maps', name: 'DuckDuckGo Maps', url: 'https://duckduckgo.com/', param: 'q', extra: '&iaxm=maps&ia=maps' },
+                    { id: 'translate', name: 'Google Translate', url: 'https://translate.google.com/', param: 'text' },
+                ]
+            }
+        ];
+
+        // Flatten for easy access
+        const searchEngines = categories.flatMap(cat => cat.engines);
+
+        const defaultEngines = ['google', 'ddg', 'youtube', 'startpage', 'google-img', 'ddg-img', 'startpage-img', 'wiki-en', 'gdrive', 'wolfram'];
+
+        // Generate checkboxes by category
+        function renderEngines() {
+            const container = document.getElementById('enginesGrid');
+            const saved = JSON.parse(localStorage.getItem('selectedEngines') || 'null');
+
+            container.innerHTML = categories.map(category => `
+                <div class="category">
+                    <div class="category-header">
+                        <span class="category-name">${category.name}</span>
+                        <div class="category-buttons">
+                            <button type="button" class="cat-btn" onclick="selectCategory('${category.name}', true)">All</button>
+                            <button type="button" class="cat-btn" onclick="selectCategory('${category.name}', false)">None</button>
+                        </div>
+                    </div>
+                    <div class="category-grid">
+                        ${category.engines.map(engine => {
+                            const checked = saved ? saved.includes(engine.id) : defaultEngines.includes(engine.id);
+                            return `
+                                <div class="engine-item" onclick="toggleCheckbox('${engine.id}')">
+                                    <input type="checkbox" id="${engine.id}" ${checked ? 'checked' : ''} onclick="event.stopPropagation(); saveSelection()">
+                                    <label for="${engine.id}">${engine.name}</label>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectCategory(categoryName, select) {
+            const category = categories.find(c => c.name === categoryName);
+            if (category) {
+                category.engines.forEach(e => document.getElementById(e.id).checked = select);
+                saveSelection();
+            }
+        }
+
+        function toggleCheckbox(id) {
+            const cb = document.getElementById(id);
+            cb.checked = !cb.checked;
+            saveSelection();
+        }
+
+        function saveSelection() {
+            const selected = searchEngines
+                .filter(e => document.getElementById(e.id).checked)
+                .map(e => e.id);
+            localStorage.setItem('selectedEngines', JSON.stringify(selected));
+        }
+
+        function selectAll() {
+            searchEngines.forEach(e => document.getElementById(e.id).checked = true);
+            saveSelection();
+        }
+
+        function selectNone() {
+            searchEngines.forEach(e => document.getElementById(e.id).checked = false);
+            saveSelection();
+        }
+
+        renderEngines();
+
+        // Pre-fill from ?q= or ?query= parameter
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const initialQuery = params.get('q') || params.get('query');
+            if (initialQuery) {
+                const input = document.getElementById('searchInput');
+                input.value = initialQuery;
+                input.focus();
+            }
+        })();
+
+        let popupPermissionRequested = false;
+
+        // Request popup permission when user starts typing
+        document.getElementById('searchInput').addEventListener('input', function() {
+            if (!popupPermissionRequested && this.value.length > 0) {
+                popupPermissionRequested = true;
+                // Show notice about popups
+                document.getElementById('permissionNotice').classList.add('show');
+
+                // Try to open and immediately close a window to trigger permission prompt
+                const testWindow = window.open('about:blank', '_blank');
+                if (testWindow) {
+                    testWindow.close();
+                    document.getElementById('permissionNotice').classList.remove('show');
+                }
+            }
+        });
+
+        // Allow Enter key to trigger search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchAll();
+            }
+        });
+
+        function searchAll() {
+            const query = document.getElementById('searchInput').value.trim();
+
+            if (!query) {
+                document.getElementById('searchInput').focus();
+                return;
+            }
+
+            const selectedEngines = searchEngines.filter(e => document.getElementById(e.id).checked);
+
+            if (selectedEngines.length === 0) {
+                document.getElementById('permissionNotice').classList.add('show');
+                document.getElementById('permissionNotice').textContent = 'Please select at least one search engine!';
+                return;
+            }
+
+            const encodedQuery = encodeURIComponent(query);
+            let blockedCount = 0;
+
+            selectedEngines.forEach((engine, index) => {
+                const extra = engine.extra || '';
+                const url = `${engine.url}?${engine.param}=${encodedQuery}${extra}`;
+
+                // Small delay between opens to avoid browser blocking
+                setTimeout(() => {
+                    const newWindow = window.open(url, '_blank');
+                    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                        blockedCount++;
+                        if (blockedCount === 1) {
+                            document.getElementById('permissionNotice').classList.add('show');
+                            document.getElementById('permissionNotice').textContent =
+                                'Popups blocked! Please allow popups for this site and try again.';
+                        }
+                    }
+                }, index * 100);
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Universal Paywalls | Universals</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --text-primary: #fff;
+            --text-secondary: #888;
+            --border-color: #333;
+            --accent: #4a9eff;
+            --accent-hover: #3a8eef;
+        }
+        [data-theme="light"] {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #fff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --border-color: #ddd;
+            --accent: #2080df;
+            --accent-hover: #1a70cf;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            transition: background 0.3s, color 0.3s;
+        }
+        .top-nav {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+        .nav-link.hub {
+            color: var(--text-primary);
+        }
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            color: var(--text-primary);
+        }
+        .theme-toggle:hover {
+            border-color: var(--accent);
+        }
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            margin: auto 0;
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            font-weight: 300;
+            font-size: 2rem;
+        }
+        .subtitle {
+            margin: 0 0 30px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .paywall-box {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        input[type="url"],
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.3s, background 0.3s, color 0.3s;
+        }
+        input:focus {
+            border-color: var(--accent);
+        }
+        input::placeholder {
+            color: var(--text-secondary);
+        }
+        button#unlockBtn {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button#unlockBtn:hover {
+            background: var(--accent-hover);
+        }
+        button#unlockBtn:active {
+            transform: scale(0.98);
+        }
+        button#unlockBtn:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        .permission-notice {
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #ff4444, #ff6b6b);
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            display: none;
+            border: 2px solid #ff6666;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .permission-notice.show {
+            display: block;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(255, 68, 68, 0.8);
+                transform: scale(1.02);
+            }
+        }
+        .providers-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .providers-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .providers-header span {
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+        .select-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .select-btn {
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .select-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .providers-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .category {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .category-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .category-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .cat-btn {
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+        }
+        .provider-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            border: 1px solid var(--border-color);
+        }
+        .provider-item:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        .provider-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+        .provider-item label {
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="top-nav">
+        <div class="nav-links">
+            <a href="../index.html" class="nav-link hub" title="Return to Universals Hub">← Universals</a>
+            <a href="../search/index.html" class="nav-link" title="Switch to Universal Search">Search ↗</a>
+        </div>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">🌙</button>
+    </header>
+
+    <main class="container">
+        <div id="permissionNotice" class="permission-notice">
+            Allow popups for this site to open all bypass tabs
+        </div>
+        <h1>Universal Paywalls</h1>
+        <p class="subtitle">Open article across multiple archive & paywall bypass services simultaneously</p>
+        <div class="paywall-box">
+            <input type="url" id="urlInput" placeholder="https://example.com/article" autocomplete="off" autofocus>
+            <button id="unlockBtn" onclick="unlockAll()">unlock in tabs</button>
+
+            <div class="providers-section">
+                <div class="providers-header">
+                    <span>Paywall Providers</span>
+                    <div class="select-buttons">
+                        <button type="button" class="select-btn" onclick="selectAll()">All</button>
+                        <button type="button" class="select-btn" onclick="selectNone()">None</button>
+                    </div>
+                </div>
+                <div class="providers-grid" id="providersGrid"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            const toggle = document.getElementById('themeToggle');
+
+            if (body.getAttribute('data-theme') === 'light') {
+                body.removeAttribute('data-theme');
+                toggle.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                toggle.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                document.getElementById('themeToggle').textContent = '☀️';
+            }
+        })();
+
+        // Provider configuration
+        const categories = [
+            {
+                name: 'Archives & Caches',
+                providers: [
+                    { id: 'archive-ph', name: 'Archive.ph (Archive.today)', buildUrl: url => `https://archive.ph/newest/${url}` },
+                    { id: 'web-archive', name: 'Wayback Machine', buildUrl: url => `https://web.archive.org/web/${url}` },
+                    { id: 'google-cache', name: 'Google Cache', buildUrl: url => `https://webcache.googleusercontent.com/search?q=cache:${url}` },
+                ]
+            },
+            {
+                name: 'Bypass Proxies & Readers',
+                providers: [
+                    { id: '12ft', name: '12ft.io', buildUrl: url => `https://12ft.io/${url}` },
+                    { id: 'removepaywall', name: 'RemovePaywall.com', buildUrl: url => `https://www.removepaywall.com/search?url=${encodeURIComponent(url)}` },
+                    { id: 'smry', name: 'smry.ai', buildUrl: url => `https://smry.ai/${url}` },
+                    { id: '1ft', name: '1ft.io', buildUrl: url => `https://1ft.io/${url}` },
+                    { id: 'removepaywalls', name: 'RemovePaywalls.com', buildUrl: url => `https://removepaywalls.com/${url}` },
+                ]
+            }
+        ];
+
+        // Flatten for easy access
+        const paywallProviders = categories.flatMap(cat => cat.providers);
+
+        // Default active providers on first visit
+        const defaultProviders = ['archive-ph', 'web-archive', '12ft', 'removepaywall', 'smry'];
+
+        // Normalize URL if protocol is omitted
+        function normalizeUrl(rawUrl) {
+            let trimmed = rawUrl.trim();
+            if (!trimmed) return '';
+            if (!/^https?:\/\//i.test(trimmed)) {
+                trimmed = 'https://' + trimmed;
+            }
+            return trimmed;
+        }
+
+        // Render provider checkboxes
+        function renderProviders() {
+            const container = document.getElementById('providersGrid');
+            const saved = JSON.parse(localStorage.getItem('selectedPaywalls') || 'null');
+
+            container.innerHTML = categories.map(category => `
+                <div class="category">
+                    <div class="category-header">
+                        <span class="category-name">${category.name}</span>
+                        <div class="category-buttons">
+                            <button type="button" class="cat-btn" onclick="selectCategory('${category.name}', true)">All</button>
+                            <button type="button" class="cat-btn" onclick="selectCategory('${category.name}', false)">None</button>
+                        </div>
+                    </div>
+                    <div class="category-grid">
+                        ${category.providers.map(provider => {
+                            const checked = saved ? saved.includes(provider.id) : defaultProviders.includes(provider.id);
+                            return `
+                                <div class="provider-item" onclick="toggleCheckbox('${provider.id}')">
+                                    <input type="checkbox" id="${provider.id}" ${checked ? 'checked' : ''} onclick="event.stopPropagation(); saveSelection()">
+                                    <label for="${provider.id}">${provider.name}</label>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectCategory(categoryName, select) {
+            const category = categories.find(c => c.name === categoryName);
+            if (category) {
+                category.providers.forEach(p => document.getElementById(p.id).checked = select);
+                saveSelection();
+            }
+        }
+
+        function toggleCheckbox(id) {
+            const cb = document.getElementById(id);
+            cb.checked = !cb.checked;
+            saveSelection();
+        }
+
+        function saveSelection() {
+            const selected = paywallProviders
+                .filter(p => document.getElementById(p.id).checked)
+                .map(p => p.id);
+            localStorage.setItem('selectedPaywalls', JSON.stringify(selected));
+        }
+
+        function selectAll() {
+            paywallProviders.forEach(p => document.getElementById(p.id).checked = true);
+            saveSelection();
+        }
+
+        function selectNone() {
+            paywallProviders.forEach(p => document.getElementById(p.id).checked = false);
+            saveSelection();
+        }
+
+        renderProviders();
+
+        // Pre-fill from ?url= query parameter
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const initialUrl = params.get('url') || params.get('link');
+            if (initialUrl) {
+                const input = document.getElementById('urlInput');
+                input.value = initialUrl;
+                input.focus();
+            }
+        })();
+
+        let popupPermissionRequested = false;
+
+        // Request popup permission when user starts typing
+        document.getElementById('urlInput').addEventListener('input', function() {
+            if (!popupPermissionRequested && this.value.length > 0) {
+                popupPermissionRequested = true;
+                document.getElementById('permissionNotice').classList.add('show');
+
+                const testWindow = window.open('about:blank', '_blank');
+                if (testWindow) {
+                    testWindow.close();
+                    document.getElementById('permissionNotice').classList.remove('show');
+                }
+            }
+        });
+
+        // Enter key triggers unlock
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                unlockAll();
+            }
+        });
+
+        function unlockAll() {
+            const inputVal = document.getElementById('urlInput').value.trim();
+            const targetUrl = normalizeUrl(inputVal);
+
+            if (!targetUrl) {
+                document.getElementById('urlInput').focus();
+                return;
+            }
+
+            const selected = paywallProviders.filter(p => document.getElementById(p.id).checked);
+
+            if (selected.length === 0) {
+                document.getElementById('permissionNotice').classList.add('show');
+                document.getElementById('permissionNotice').textContent = 'Please select at least one paywall provider!';
+                return;
+            }
+
+            let blockedCount = 0;
+
+            selected.forEach((provider, index) => {
+                const finalUrl = provider.buildUrl(targetUrl);
+
+                // Delay between tab opens to avoid browser throttling
+                setTimeout(() => {
+                    const newWindow = window.open(finalUrl, '_blank');
+                    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                        blockedCount++;
+                        if (blockedCount === 1) {
+                            document.getElementById('permissionNotice').classList.add('show');
+                            document.getElementById('permissionNotice').textContent =
+                                'Popups blocked! Please allow popups for this site and try again.';
+                        }
+                    }
+                }, index * 100);
+            });
+        }
+    </script>
+</body>
+
+</html>

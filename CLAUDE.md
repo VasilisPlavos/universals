@@ -36,5 +36,5 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## URL Parameters
 
-- `?url=` (or `?link=`): Pre-fills article URL in Universal Paywalls (auto-routes if visited on root hub).
-- `?q=` (or `?query=`): Pre-fills search query in Universal Search (auto-routes if visited on root hub).
+- `?url=` (or `?link=`): Pre-fills article URL in Universal Paywalls (`/paywalls/`).
+- `?q=` (or `?query=`): Pre-fills search query in Universal Search (`/search/`).

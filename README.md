@@ -63,18 +63,16 @@ Open any article URL across multiple public web archives, cache services, and by
 You can prefill forms directly through the URL, making it easy to create browser bookmarks, extensions, or Alfred/Raycast shortcuts:
 
 ### Pre-fill Universal Paywalls
-Pass any article link with `?url=`:
+Pass any article link with `?url=` directly to the paywalls tool:
 ```text
 https://vasilisplavos.github.io/universals/paywalls/?url=https://example.com/article
 ```
-*(Passing `?url=` to the root `universals/?url=...` will also automatically route directly to Paywalls!)*
 
 ### Pre-fill Universal Search
-Pass your search term with `?q=`:
+Pass your search term with `?q=` directly to the search tool:
 ```text
 https://vasilisplavos.github.io/universals/search/?q=my+search+query
 ```
-*(Passing `?q=` to the root `universals/?q=...` will also automatically route directly to Search!)*
 
 ---
 
